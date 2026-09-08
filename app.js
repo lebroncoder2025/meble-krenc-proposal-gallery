@@ -15,19 +15,22 @@ document.querySelectorAll('dialog').forEach(dialog=>{
 const lightbox=document.querySelector('[data-lightbox-root]'),photo=document.querySelector('[data-lightbox-image]');
 const gallery=[...document.querySelectorAll('[data-lightbox]')];
 let selected=gallery,current=0;
-document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{
- document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
- gallery.forEach(card=>card.hidden=button.dataset.filter!=='all'&&card.dataset.category!==button.dataset.filter);
- selected=gallery.filter(card=>!card.hidden);
- document.querySelector('.gallery-status').textContent='Liczba zdjęć: '+selected.length;
-}));
+let activeFilter='all',expanded=false;
+const more=document.createElement('button');more.type='button';more.className='gallery-more';more.textContent='Pokaż wszystkie zdjęcia (31)';document.querySelector('.work-grid')?.after(more);
+function applyFilter(filter){activeFilter=filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));let count=0;
+gallery.forEach(card=>{const match=filter==='all'||card.dataset.category===filter;card.hidden=!match||(filter==='all'&&!expanded&&count>=9);if(match)count++;});
+selected=gallery.filter(card=>!card.hidden);document.querySelector('.gallery-status').textContent='Widoczne zdjęcia: '+selected.length;more.hidden=filter!=='all'||expanded;}
+document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>applyFilter(button.dataset.filter)));
+document.querySelectorAll('[data-hero-filter]').forEach(link=>link.addEventListener('click',()=>applyFilter(link.dataset.heroFilter)));
+more.addEventListener('click',()=>{expanded=true;applyFilter(activeFilter);});
+if(gallery.length)applyFilter('all');
 const showPhoto=index=>{current=(index+selected.length)%selected.length;const link=selected[current];photo.src=link.href;photo.alt=link.querySelector('img').alt;document.querySelector('[data-lightbox-caption]').textContent=link.querySelector('.work-caption').innerText.replace('↗','').trim()+' · '+(current+1)+' / '+selected.length};
 gallery.forEach(link=>link.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();showPhoto(selected.indexOf(link));openDialog(lightbox)}));
 document.querySelector('[data-lightbox-close]')?.addEventListener('click',()=>lightbox.close());
 document.querySelector('[data-lightbox-prev]')?.addEventListener('click',()=>showPhoto(current-1));
 document.querySelector('[data-lightbox-next]')?.addEventListener('click',()=>showPhoto(current+1));
 lightbox?.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();showPhoto(current+(e.key==='ArrowRight'?1:-1))}});
-const cookieKey='mk-cookie-preferences',bar=document.querySelector('[data-cookie-bar]'),settings=document.querySelector('[data-cookie-settings]');
+const cookieKey='mk-gallery-privacy-v3',bar=document.querySelector('[data-cookie-bar]'),settings=document.querySelector('[data-cookie-settings]');
 let saved=false;try{saved=Boolean(localStorage.getItem(cookieKey))}catch{/* Storage is optional. */}
 if(bar)bar.hidden=saved;
 document.querySelectorAll('[data-cookie-open]').forEach(b=>b.addEventListener('click',()=>openDialog(settings)));
