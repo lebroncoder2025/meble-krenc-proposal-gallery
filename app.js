@@ -13,7 +13,10 @@ document.querySelectorAll('dialog').forEach(dialog=>{
  dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))dialog.close()});
 });
 const lightbox=document.querySelector('[data-lightbox-root]'),photo=document.querySelector('[data-lightbox-image]');
-const gallery=[...document.querySelectorAll('[data-lightbox]')];
+const originalCards=[...document.querySelectorAll('[data-lightbox]')];
+const featured=[0,6,18,3,10,20,5,29,25];
+const gallery=[...featured.map(i=>originalCards[i]).filter(Boolean),...originalCards.filter((_,i)=>!featured.includes(i))];
+const grid=document.querySelector('.work-grid');if(grid)gallery.forEach(card=>grid.append(card));
 let selected=gallery,current=0;
 let activeFilter='all',expanded=false;
 const more=document.createElement('button');more.type='button';more.className='gallery-more';more.textContent='Pokaż wszystkie zdjęcia (31)';document.querySelector('.work-grid')?.after(more);
