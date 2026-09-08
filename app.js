@@ -1,10 +1,4 @@
 document.documentElement.classList.add('js');
-const menu=document.querySelector('.menu'),nav=document.querySelector('.site-nav');
-const setMenu=open=>{menu?.setAttribute('aria-expanded',String(open));nav?.classList.toggle('is-open',open)};
-menu?.addEventListener('click',()=>setMenu(menu.getAttribute('aria-expanded')!=='true'));
-nav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu?.getAttribute('aria-expanded')==='true'){setMenu(false);menu.focus()}});
-matchMedia('(min-width:681px)').addEventListener('change',()=>setMenu(false));
 document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
 let returnFocus=null;
 const openDialog=dialog=>{if(!dialog)return;returnFocus=document.activeElement;dialog.showModal();document.body.classList.add('modal-open')};
