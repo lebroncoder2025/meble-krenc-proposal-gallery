@@ -27,17 +27,9 @@ document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListen
 document.querySelectorAll('[data-hero-filter]').forEach(link=>link.addEventListener('click',()=>applyFilter(link.dataset.heroFilter)));
 more.addEventListener('click',()=>{expanded=true;applyFilter(activeFilter);});
 if(gallery.length)applyFilter('all');
-const showPhoto=index=>{current=(index+selected.length)%selected.length;const link=selected[current];photo.src=link.href;photo.alt=link.querySelector('img').alt;document.querySelector('[data-lightbox-caption]').textContent=link.querySelector('.work-caption').innerText.replace('↗','').trim()+' · '+(current+1)+' / '+selected.length};
+const showPhoto=index=>{current=(index+selected.length)%selected.length;const link=selected[current];photo.src=link.href;photo.alt=link.querySelector('img').alt;document.querySelector('[data-lightbox-caption]').textContent=link.querySelector('.work-caption').innerText.trim()+' · '+(current+1)+' / '+selected.length};
 gallery.forEach(link=>link.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;e.preventDefault();showPhoto(selected.indexOf(link));openDialog(lightbox)}));
 document.querySelector('[data-lightbox-close]')?.addEventListener('click',()=>lightbox.close());
 document.querySelector('[data-lightbox-prev]')?.addEventListener('click',()=>showPhoto(current-1));
 document.querySelector('[data-lightbox-next]')?.addEventListener('click',()=>showPhoto(current+1));
 lightbox?.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();showPhoto(current+(e.key==='ArrowRight'?1:-1))}});
-const cookieKey='mk-gallery-privacy-v3',bar=document.querySelector('[data-cookie-bar]'),settings=document.querySelector('[data-cookie-settings]');
-let saved=false;try{saved=Boolean(localStorage.getItem(cookieKey))}catch{/* Storage is optional. */}
-if(bar)bar.hidden=saved;
-document.querySelectorAll('[data-cookie-open]').forEach(b=>b.addEventListener('click',()=>openDialog(settings)));
-const saveCookies=()=>{try{localStorage.setItem(cookieKey,'essential')}catch{/* Dismiss for this visit if storage is blocked. */}if(bar)bar.hidden=true;if(settings?.open)settings.close()};
-document.querySelector('[data-cookie-essential]')?.addEventListener('click',saveCookies);
-document.querySelector('[data-cookie-save]')?.addEventListener('click',saveCookies);
-document.querySelector('[data-cookie-close]')?.addEventListener('click',()=>settings.close());
